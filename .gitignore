@@ -1,0 +1,22 @@
+.idea
+.coverage
+htmlcov
+*.pyc
+*.iml
+**/workflow-properties/*
+resources/globalpreprod.cfg
+resources/globalprod.cfg
+*.zip
+*.json
+*.xlsx
+*.jar
+*.log
+datasets/*
+logs/*
+
+
+# Setuptools distribution folder.
+/dist/
+
+# Python egg metadata, regenerated from source files by setuptools
+/*.egg-info
