@@ -1,0 +1,7 @@
+include runtests.sh
+include runthrive.py
+recursive-include config *
+recursive-include resources *
+recursive-include deployment *
+recursive-include utils *
+recursive-include test *

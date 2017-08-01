@@ -1,0 +1,6 @@
+TOPIC_NAME varchar(500)
+MESSAGE varchar(500)
+SOURCE_TIMESTAMP timestamp
+EVENT_ID varchar(40)
+SERVER_TIMESTAMP timestamp
+HIVE_TIMESTAMP timestamp

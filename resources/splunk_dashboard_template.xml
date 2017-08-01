@@ -1,0 +1,156 @@
+<!--
+# Copyright 2016 Intuit
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+-->
+
+<dashboard>
+  <label>@DATASETNAME - Thrive @ENV</label>
+  <row>
+    <panel>
+      <title>Last 24 hours</title>
+      <chart>
+        <title>Load status</title>
+        <search>
+          <query>index=@INDEX source=@LOGDIR/* earliest=-24h| eval load_status=case(msg=="No new HDFS directories to process.","No new dirs",msg=="Thrive run failed", "Fail", percent_loss_mr!=0.0,"HDFS In/Parse mismatch", percent_loss_hv!=0.0,"Hive/Vertica mismatch", percent_loss_mr==0.0 AND percent_loss_hv==0.0, "Success", lock_status=1,"Locked")  | bucket span=1h _time | timechart count by load_status | fields - NULL</query>
+          </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">false</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.fieldColors">{"Fail":0xFF0000, "Success":0x00FF00, "Hive/Vertica mismatch":0xFFA500, "No new dirs":0xFFFF00, "HDFS In/Parse mismatch":0xD15FEE, "Locked":0x000000}</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.axisTitleY.text"># of loads</option>
+        <option name="charting.axisTitleX.text">Hour</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Last 14 days</title>
+      <chart>
+        <title>Load status</title>
+        <search>
+          <query>index=@INDEX source=@LOGDIR/* earliest=-14d| eval load_status=case(msg=="No new HDFS directories to process.","No new dirs",msg=="Thrive run failed", "Fail", percent_loss_mr!=0.0,"HDFS In/Parse mismatch", percent_loss_hv!=0.0,"Hive/Vertica mismatch", percent_loss_mr==0.0 AND percent_loss_hv==0.0, "Success", lock_status=1,"Locked")  | bucket span=1d _time | timechart count by load_status | fields - NULL</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">false</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.fieldColors">{"Fail":0xFF0000, "Success":0x00FF00, "Hive/Vertica mismatch":0xFFA500, "No new dirs":0xFFFF00, "HDFS In/Parse mismatch":0xD15FEE, "Locked":0x000000}</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.axisTitleY.text"># of loads</option>
+        <option name="charting.axisTitleX.text">Day</option>
+        <option name="charting.chart.columnStyle.width">3</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Row counts (HDFS In/Parse and Hive/Vertica)</title>
+        <search>
+          <query>index=@INDEX hive_rows_loaded source=@LOGDIR/* earliest=-1d | bucket span=1h _time | stats sum(jetty_events) as jetty_cts, sum(kafka_events) as kafka_cts, sum(mr_input_records) as HDFS_Ins, sum(mr_processed_records) as HDFS_Processeds,  sum(hive_rows_loaded) as HRs, sum(vertica_rows_loaded) as VRs by _time | eval s1="Ev_Jetty Ev_Kafka HDFS_In HDFS_Parse Hive Vertica" | makemv s1 | mvexpand s1 | eval yval=case(s1="Ev_Jetty", jetty_cts, s1="Ev_Kafka", kafka_cts, s1="HDFS_In", HDFS_Ins, s1="HDFS_Parse", HDFS_Processeds,  s1=="Hive",HRs,s1=="Vertica",VRs) |  xyseries _time,s1,yval | makecontinuous _time span=1h</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.enabled">false</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.axisTitleY.text">Counts</option>
+        <option name="charting.axisTitleX.text">Hour</option>
+        <option name="charting.fieldColors">{"Ev_Jetty":0xE0EEEE, "Ev_Kafka":0x00688B, "HDFS_In":0xEED2EE, "HDFS_Parse":0xE066FF, "Hive":0xF4A460, "Vertica":0xCD853F}</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Row counts (HDFS In/Parse and Hive/Vertica)</title>
+        <search>
+          <query>index=@INDEX hive_rows_loaded source=@LOGDIR/* earliest=-14d | bucket span=1d _time | stats sum(jetty_events) as jetty_cts, sum(kafka_events) as kafka_cts, sum(mr_input_records) as HDFS_Ins, sum(mr_processed_records) as HDFS_Processeds,  sum(hive_rows_loaded) as HRs, sum(vertica_rows_loaded) as VRs by _time | eval s1="Ev_Jetty Ev_Kafka HDFS_In HDFS_Parse Hive Vertica" | makemv s1 | mvexpand s1 | eval yval=case(s1="Ev_Jetty", jetty_cts, s1="Ev_Kafka", kafka_cts, s1="HDFS_In", HDFS_Ins, s1="HDFS_Parse", HDFS_Processeds,  s1=="Hive",HRs,s1=="Vertica",VRs) |  xyseries _time,s1,yval | makecontinuous _time span=1d</query>
+        </search>
+        <option name="charting.axisLabelsX.majorLabelStyle.overflowMode">ellipsisNone</option>
+        <option name="charting.axisLabelsX.majorLabelStyle.rotation">0</option>
+        <option name="charting.axisTitleX.visibility">visible</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.axisTitleY2.visibility">visible</option>
+        <option name="charting.axisX.scale">linear</option>
+        <option name="charting.axisY.scale">log</option>
+        <option name="charting.axisY2.enabled">false</option>
+        <option name="charting.axisY2.scale">inherit</option>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.bubbleMaximumSize">50</option>
+        <option name="charting.chart.bubbleMinimumSize">10</option>
+        <option name="charting.chart.bubbleSizeBy">area</option>
+        <option name="charting.chart.nullValueMode">gaps</option>
+        <option name="charting.chart.sliceCollapsingThreshold">0.01</option>
+        <option name="charting.chart.stackMode">default</option>
+        <option name="charting.chart.style">shiny</option>
+        <option name="charting.drilldown">all</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.legend.labelStyle.overflowMode">ellipsisMiddle</option>
+        <option name="charting.legend.placement">bottom</option>
+        <option name="charting.axisTitleY.text">Counts</option>
+        <option name="charting.axisTitleX.text">Day</option>
+        <option name="charting.fieldColors">{"Ev_Jetty":0xE0EEEE, "Ev_Kafka":0x00688B, "HDFS_In":0xEED2EE, "HDFS_Parse":0xE066FF, "Hive":0xF4A460, "Vertica":0xCD853F}</option>
+     </chart>
+    </panel>
+  </row>
+</dashboard>

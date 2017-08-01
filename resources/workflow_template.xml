@@ -1,0 +1,93 @@
+<!--
+# Copyright 2016 Intuit
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+-->
+
+<workflow-app name="test" xmlns="uri:oozie:workflow:0.1">
+    <start to="set-input"/>
+    <action name="set-input">
+        <fs>
+            <delete path='${nameNode}/${outputDir}' />
+        </fs>
+        <ok to="parse-json" />
+        <error to="fail"/>
+    </action>
+
+    <action name="parse-json">
+        <map-reduce>
+            <job-tracker>${jobTracker}</job-tracker>
+            <name-node>${nameNode}</name-node>
+
+            <streaming>
+                <mapper>@MAPPER</mapper>
+            </streaming>
+
+            <configuration>
+
+                <property>
+                    <name>mapred.job.queue.name</name>
+                    <value>prd_foundation</value>
+                </property>
+
+                <property>
+                    <name>mapreduce.job.split.metainfo.maxsize</name>
+                    <value>-1</value>
+                </property>
+
+                <property>
+                    <name>mapred.input.dir</name>
+                    <value>${inputFile}</value>
+                </property>
+
+                <property>
+                    <name>mapred.output.dir</name>
+                    <value>${outputDir}</value>
+                </property>
+
+                <property>
+                    <name>mapred.reduce.tasks</name>
+                    <value>${numReducers}</value>
+                </property>
+
+                <property>
+                    <name>mapred.output.compress</name>
+                    <value>true</value>
+                </property>
+
+                <property>
+                    <name>mapred.output.compression.codec</name>
+                    <value>@CODEC</value>
+                </property>
+
+               <property>
+                    <name>oozie.action.external.stats.write</name>
+                    <value>true</value>
+                </property>
+
+            </configuration>
+            <file>@HDFS_PATH#@MAPPER</file>
+        </map-reduce>
+
+        <ok to="fail"/>
+        <error to="fail"/>
+    </action>
+
+    <kill name="fail">
+        <message>
+            Execution failed
+        </message>
+    </kill>
+
+    <end name="end"/>
+</workflow-app>
