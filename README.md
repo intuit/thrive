@@ -102,8 +102,8 @@ The Thrive command-line API is summarized below:
    
 During its lifecycle in Thrive, every onboarded dataset proceeds through
 multiple steps called 'phases'. The execution of each phase is managed by a
-single config file. Examples of config files can be found [here]
-(https://github.intuit.com/idea/thrive/tree/develop/config). For a given dataset
+single config file. An example config file can be found 
+[here](https://github.com/intuit/thrive/blob/master/config/thrive_example_config.cfg). For a given dataset
 all phases share the same config file. The various phases are described below.
 
 Execution of each phase is triggered by
@@ -403,7 +403,7 @@ There are parts that the core code uses repeatedly and it pays well to invest so
 thought in abstracting these reusable components. The following diagram depicts 
 Thrive architecture.  
 
-![Thrive arch diagram](https://github.intuit.com/storage/user/1548/files/edf8d568-7a91-11e6-8576-97f793d3bee5)
+![Thrive arch diagram](thrive_arch2.png)
 
 Thrive core has two families of classes: `Managers` and `Handlers`. `Managers` are 
 wrapper layers on various resources (Hadoop, Hive, Vertica, Oozie, Graphite, 
