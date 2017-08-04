@@ -315,7 +315,6 @@ directories (which, by default, are created at 10 minute intervals). The
       
       1.6 Rejected rows cannot be specified on `COPY`
        
-
 # Appendix
 
 ## Thrive risks and mitigation measures
