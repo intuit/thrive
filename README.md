@@ -271,6 +271,7 @@ the `replay` phase in Thrive. Thrive supports replays at the granularity of HDFS
 directories (which, by default, are created at 10 minute intervals). The
 `replay` phase, is executed in the following steps:
 
+
   1. Identify the folders which need to be reprocessed (i.e. a list containing
   folders in the `d_yyyymmdd-HHMM` format).
   2. Copy these folders a `replaydirs.txt` file. The folders in this list would
